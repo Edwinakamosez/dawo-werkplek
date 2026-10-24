@@ -14,6 +14,7 @@
           dawo.modules.nixos.boot-loader
           dawo.modules.nixos.hardware-generic-intel
           dawo.modules.nixos.disko-single-nvme-luks
+          dawo.modules.nixos.maid-dawo-generic
           ./hosts/laptop-sata.nix
         ];
       };
