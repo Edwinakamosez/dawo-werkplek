@@ -11,4 +11,5 @@
   dawo.desktop.plasma.enable = true;
   dawo.secureboot.enable = false;
   dawo.autoUpdate.enable = false;
+  dawo.diskUnlock.tpm2.enable = true;  
 }
