@@ -51,29 +51,24 @@ nix shell nixpkgs#git --command \
   nix run github:nix-community/disko/latest -- \
     --mode destroy,format,mount --yes-wipe-all-disks --flake "$FLAKE"
 
-echo "=== Stap 5: Secure Boot-sleutels maken ==="
-nix shell nixpkgs#sbctl --command sbctl create-keys
-mkdir -p /mnt/var/lib
-cp -a /var/lib/sbctl /mnt/var/lib/sbctl
-chmod -R go-rwx /mnt/var/lib/sbctl
-
-echo "=== Stap 6: installeren ==="
+echo "=== Stap 5: installeren ==="
 nix shell nixpkgs#git --command \
   nixos-install --flake "$FLAKE" --no-root-passwd
 
-echo "=== Stap 7: wachtwoord klaarzetten voor TPM-inschrijving ==="
-mkdir -p /mnt/var/lib/werkplek
-install -m 600 /tmp/secret.key /mnt/var/lib/werkplek/luks-bootstrap.key
-
-echo "=== Stap 8: Secure Boot-sleutels in de BIOS inschrijven ==="
-if nix shell nixpkgs#sbctl --command sbctl enroll-keys --microsoft; then
-  echo "Sleutels ingeschreven."
+echo "=== Stap 6: TPM2 automatisch inschrijven ==="
+if [ -e /dev/tpmrm0 ]; then
+  udevadm settle
+  if systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=7 \
+       --unlock-key-file=/tmp/secret.key \
+       /dev/disk/by-partlabel/disk-main-luks; then
+    echo "TPM2 ingeschreven: de schijf ontgrendelt zichzelf bij de eerste start."
+  else
+    echo "WAARSCHUWING: TPM-inschrijving mislukt. De laptop vraagt gewoon het wachtwoord."
+  fi
 else
-  echo "LET OP: inschrijven mislukt. Zet de BIOS in Setup Mode (Secure Boot-sleutels wissen)"
-  echo "en voer na de herstart uit: sudo sbctl enroll-keys --microsoft"
+  echo "Geen TPM gevonden, overgeslagen. De laptop vraagt het wachtwoord."
 fi
 
 rm -f /tmp/secret.key
 echo "=== Klaar, herstart ==="
-echo "Zet daarna in de BIOS Secure Boot AAN als dat nog niet zo is."
 reboot
