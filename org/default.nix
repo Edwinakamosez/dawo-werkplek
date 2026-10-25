@@ -28,5 +28,5 @@
   # --- Programma's ---
   # EuroOffice op elke laptop. Een laptop die het niet wil:
   # werkplek.apps.euroOffice.enable = false; in zijn hostbestand.
-  werkplek.apps.euroOffice.enable = lib.mkDefault true;
+  werkplek.apps.euroOffice.enable = lib.mkDefault false;
 }
