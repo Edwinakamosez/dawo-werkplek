@@ -5,14 +5,33 @@ export NIX_CONFIG="experimental-features = nix-command flakes"
 REPO=https://github.com/Edwinakamosez/dawo-werkplek.git
 HOST="${1:-}"
 
-[ "$(id -u)" -eq 0 ] || { echo "Draai dit als root: sudo bash /tmp/install.sh <hostnaam>"; exit 1; }
-[ -n "$HOST" ] || { echo "Gebruik: sudo bash /tmp/install.sh <hostnaam>   (bijv. laptop-sata of laptop-nvme)"; exit 1; }
+[ "$(id -u)" -eq 0 ] || { echo "Draai dit als root: sudo bash /tmp/install.sh"; exit 1; }
 cd /tmp
 
 echo "=== Stap 1: repo ophalen en vastpinnen ==="
 rm -rf /tmp/werkplek
 nix shell nixpkgs#git --command git clone --depth 1 "$REPO" /tmp/werkplek
 nix shell nixpkgs#git --command nix flake lock /tmp/werkplek
+
+# Geen hostnaam meegegeven? Toon een menu met alle hosts uit de flake.
+if [ -z "$HOST" ]; then
+  mapfile -t HOSTS < <(nix shell nixpkgs#git --command \
+    nix eval --raw "/tmp/werkplek#nixosConfigurations" \
+    --apply 'x: builtins.concatStringsSep "\n" (builtins.attrNames x)')
+  [ "${#HOSTS[@]}" -gt 0 ] || { echo "FOUT: geen hosts gevonden in de flake."; exit 1; }
+  # Suggestie op basis van de aanwezige schijf (alleen een hint, jij kiest)
+  SUGGESTIE=""
+  if ls /dev/nvme0n1 >/dev/null 2>&1; then SUGGESTIE="laptop-nvme"; elif ls /dev/sda >/dev/null 2>&1; then SUGGESTIE="laptop-sata"; fi
+  echo "Kies het type laptop:"
+  for i in "${!HOSTS[@]}"; do
+    mark=""; [ "${HOSTS[$i]}" = "$SUGGESTIE" ] && mark="   <- gedetecteerd"
+    echo "  $((i+1))) ${HOSTS[$i]}$mark"
+  done
+  read -r -p "Nummer: " KEUZE </dev/tty
+  [[ "$KEUZE" =~ ^[0-9]+$ ]] && [ "$KEUZE" -ge 1 ] && [ "$KEUZE" -le "${#HOSTS[@]}" ] \
+    || { echo "Ongeldige keuze."; exit 1; }
+  HOST="${HOSTS[$((KEUZE-1))]}"
+fi
 FLAKE="/tmp/werkplek#$HOST"
 
 # Het schijfpad staat maar op één plek: in de hostconfiguratie van de flake.
