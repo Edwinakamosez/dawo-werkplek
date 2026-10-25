@@ -1,13 +1,21 @@
 {
-  # De basis: DAWO-Core, vastgepind op een versie (tag).
-  # DAWO updaten = hier het versienummer wijzigen, bijvoorbeeld v0.2.0 -> v0.3.0.
-  inputs.dawo.url = "git+https://codeberg.org/DAWO/DAWO-Core?ref=refs/tags/v0.2.0";
+  # NIEUW: inputs is nu een blok, want er zijn er twee.
+  inputs = {
+    # De basis: DAWO-Core, vastgepind op een versie (tag).
+    # DAWO updaten = hier het versienummer wijzigen, bijvoorbeeld v0.2.0 -> v0.3.0.
+    dawo.url = "git+https://codeberg.org/DAWO/DAWO-Core?ref=refs/tags/v0.2.0";
 
-  outputs = { dawo, ... }:
+    # NIEUW: Entra ID-login op de laptop (Himmelblau). Wordt gebruikt in org/identity.nix.
+    himmelblau.url = "github:himmelblau-idm/himmelblau/main";
+  };
+
+  # NIEUW: himmelblau erbij in de argumenten
+  outputs = { dawo, himmelblau, ... }:
     let
       # Gegevens die DAWO-blokken verwachten. "inputs" is nodig voor o.a.
       # hardware-generic-intel; hostConfig.name is de naam van deze laptop.
-      args = { inputs = dawo.inputs; hostConfig.name = "laptop-sata"; };
+      # NIEUW: himmelblau doorgeven, zodat org/identity.nix de module kan laden.
+      args = { inputs = dawo.inputs; hostConfig.name = "laptop-sata"; inherit himmelblau; };
     in {
       # Eén laptop-configuratie. install.sh wijst hiernaar met #laptop-sata.
       nixosConfigurations.laptop-sata = dawo.inputs.nixpkgs.lib.nixosSystem {
