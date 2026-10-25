@@ -40,7 +40,12 @@ swapoff -a 2>/dev/null || true
 for m in $(lsblk -nrpo NAME,TYPE "$DISK" | awk '$2=="crypt"{print $1}'); do
   cryptsetup close "$m" || true
 done
-wipefs -a "$DISK"
+# Eerst elke partitie wissen (daar zit het LUKS-kopstuk), daarna de schijf zelf
+for p in $(lsblk -lnpo NAME "$DISK" | tail -n +2); do
+  wipefs -af "$p"
+  dd if=/dev/zero of="$p" bs=1M count=16 conv=fsync
+done
+wipefs -af "$DISK"
 nix shell nixpkgs#gptfdisk --command sgdisk --zap-all "$DISK"
 dd if=/dev/zero of="$DISK" bs=1M count=20 conv=fsync
 partprobe "$DISK" || true
