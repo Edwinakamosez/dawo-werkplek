@@ -13,9 +13,11 @@ in
   # De schakelaar zelf. Standaard uit; org/default.nix zet hem aan.
   options.werkplek.apps.euroOffice.enable =
     lib.mkEnableOption "EuroOffice desktop editors (uit nixpkgs-unstable)";
+    nextcloud.enable  = lib.mkEnableOption "Nextcloud-synchronisatieclient";
 
   # Alleen als de schakelaar aan staat, wordt het pakket geïnstalleerd.
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [ unstable.euro-office-desktopeditors ];
+    ++ lib.optional cfg.nextcloud.enable pkgs.nextcloud-client;
   };
 }
