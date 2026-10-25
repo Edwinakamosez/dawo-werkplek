@@ -3,7 +3,8 @@
 { lib, ... }:
 {
   # Onze eigen bouwblokken: apps.nix (programma's) en hostname.nix (willekeurige naam).
-  imports = [ ./apps.nix ./hostname.nix ./tpm-enroll.nix ];
+  imports = [ ./apps.nix ./hostname.nix ];
+  #imports = [ ./apps.nix ./hostname.nix ./tpm-enroll.nix ];  TPM-enroll vereist secure boot
   #imports = [ ./apps.nix ]; #TEST MET HOSTNAME.NIX uit
 
   # --- Bureaublad ---
@@ -12,7 +13,7 @@
 
   # --- Opstarten en schijf ---
   # Secure Boot (lanzaboote). De sleutels maakt install.sh aan.
-  dawo.secureboot.enable = lib.mkDefault true;
+  dawo.secureboot.enable = lib.mkDefault false;
 
   # TPM2-unlock: de laptop ontgrendelt de schijf zelf via de TPM.
   # Het LUKS-wachtwoord blijft werken als terugval.
