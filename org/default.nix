@@ -11,9 +11,8 @@
   dawo.desktop.plasma.enable = lib.mkDefault true;
 
   # --- Opstarten en schijf ---
-  # Secure Boot: voor nu uit. Later aan, daarna pas de TPM inschrijven,
-  # want PCR 7 meet de Secure Boot-status.
-  dawo.secureboot.enable = lib.mkDefault false;
+  # Secure Boot (lanzaboote). De sleutels maakt install.sh aan.
+  dawo.secureboot.enable = lib.mkDefault true;
 
   # TPM2-unlock: de laptop ontgrendelt de schijf zelf via de TPM.
   # Het LUKS-wachtwoord blijft werken als terugval.
