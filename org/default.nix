@@ -3,7 +3,8 @@
 { lib, ... }:
 {
   # Onze eigen bouwblokken: apps.nix (programma's) en hostname.nix (willekeurige naam).
-  imports = [ ./apps.nix ./hostname.nix ];
+  #imports = [ ./apps.nix ./hostname.nix ];
+  imports = [ ./apps.nix ]; #TEST MET HOSTNAME.NIX uit
 
   # --- Bureaublad ---
   # KDE Plasma voor iedereen. DAWO eist precies één van plasma of gnome.
