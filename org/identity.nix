@@ -7,7 +7,7 @@
   services.himmelblau.settings = {
     domain = [ "debruinonline.net" ];               # je Entra-domein
     app_id = "13f1fd0c-ae85-4a6a-935e-dbb8c5edae2e";
-    mfa_method = "PhoneAppOTP";                     # zescijferige code uit de Authenticator-app, geen nummer-melding
+    mfa_method = "PhoneAppOTP";                     # zescijferige code uit de Authenticator-app, geen nummer-melding, namelijk niet zichtbaar op scherm
     #pam_allow_groups = [ "<object-id-van-entra-groep>" ]; # wie mag inloggen
   };
 }
