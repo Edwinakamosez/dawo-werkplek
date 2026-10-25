@@ -7,10 +7,4 @@
   # Let op: install.sh heeft ook DISK=/dev/sda, die twee moeten gelijk zijn.
 
   disko.devices.disk.main.device = lib.mkForce "/dev/sda";
-
-  # ahci en sd_mod (SATA-drivers) zitten al in de NixOS-standaard, hier niets nodig.
-
-  dawo.desktop.plasma.enable = true;   # KDE Plasma als bureaublad
-  dawo.secureboot.enable = false;      # tijdelijk uit; later aan, daarna TPM inschrijven
-  dawo.autoUpdate.enable = false;      # comin uit tot er een eigen repo-koppeling is
 }
