@@ -5,7 +5,7 @@
     # DAWO updaten = hier het versienummer wijzigen, bijvoorbeeld v0.2.0 -> v0.3.0.
     dawo.url = "git+https://codeberg.org/DAWO/DAWO-Core?ref=refs/tags/v0.2.0";
 
-    # NIEUW: Entra ID-login op de laptop (Himmelblau). Wordt gebruikt in org/identity.nix.
+    # Entra ID-login op de laptop (Himmelblau). Wordt gebruikt in org/identity.nix.
     himmelblau.url = "github:himmelblau-idm/himmelblau/main";
   };
 
