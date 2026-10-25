@@ -2,20 +2,32 @@
 set -euo pipefail
 export NIX_CONFIG="experimental-features = nix-command flakes"
 
-DISK=/dev/sda      # moet gelijk zijn aan het pad in hosts/laptop-sata.nix
 REPO=https://github.com/Edwinakamosez/dawo-werkplek.git
-HOST=laptop-sata
+HOST="${1:-}"
 
-[ "$(id -u)" -eq 0 ] || { echo "Draai dit als root: sudo bash /tmp/install.sh"; exit 1; }
-[ "$(lsblk -ndo TRAN "$DISK")" != "usb" ] || { echo "FOUT: $DISK is USB. Gestopt."; exit 1; }
+[ "$(id -u)" -eq 0 ] || { echo "Draai dit als root: sudo bash /tmp/install.sh <hostnaam>"; exit 1; }
+[ -n "$HOST" ] || { echo "Gebruik: sudo bash /tmp/install.sh <hostnaam>   (bijv. laptop-sata of laptop-nvme)"; exit 1; }
 cd /tmp
 
-echo "=== DAWO installatie: dit WIST $DISK volledig ==="
+echo "=== Stap 1: repo ophalen en vastpinnen ==="
+rm -rf /tmp/werkplek
+nix shell nixpkgs#git --command git clone --depth 1 "$REPO" /tmp/werkplek
+nix shell nixpkgs#git --command nix flake lock /tmp/werkplek
+FLAKE="/tmp/werkplek#$HOST"
+
+# Het schijfpad staat maar op één plek: in de hostconfiguratie van de flake.
+DISK=$(nix shell nixpkgs#git --command \
+  nix eval --raw "/tmp/werkplek#nixosConfigurations.$HOST.config.disko.devices.disk.main.device") \
+  || { echo "FOUT: host '$HOST' niet gevonden in de flake."; exit 1; }
+[ -b "$DISK" ] || { echo "FOUT: $DISK bestaat niet op deze machine (host '$HOST' klopt niet bij deze hardware?)."; exit 1; }
+[ "$(lsblk -ndo TRAN "$DISK")" != "usb" ] || { echo "FOUT: $DISK is USB. Gestopt."; exit 1; }
+
+echo "=== DAWO installatie van '$HOST': dit WIST $DISK volledig ==="
 lsblk "$DISK"
 read -r -p "Typ JA om door te gaan: " ANTWOORD </dev/tty
 [ "$ANTWOORD" = "JA" ] || { echo "Afgebroken."; exit 1; }
 
-echo "=== Stap 1: LUKS-wachtwoord kiezen ==="
+echo "=== Stap 2: LUKS-wachtwoord kiezen ==="
 echo "Dit wachtwoord ontgrendelt de schijf. Zonder dit wachtwoord is er geen herstel."
 while true; do
   read -r -s -p "Kies een LUKS-wachtwoord (min. 8 tekens): " PW1 </dev/tty; echo
@@ -27,12 +39,6 @@ done
 umask 077
 printf '%s' "$PW1" > /tmp/secret.key
 unset PW1 PW2
-
-echo "=== Stap 2: repo ophalen en vastpinnen ==="
-rm -rf /tmp/werkplek
-nix shell nixpkgs#git --command git clone --depth 1 "$REPO" /tmp/werkplek
-nix shell nixpkgs#git --command nix flake lock /tmp/werkplek
-FLAKE="/tmp/werkplek#$HOST"
 
 echo "=== Stap 3: schijf loskoppelen en schoonmaken ==="
 umount -R /mnt 2>/dev/null || true
