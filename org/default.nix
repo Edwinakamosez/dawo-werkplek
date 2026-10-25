@@ -3,7 +3,8 @@
 { lib, ... }:
 {
   # Onze eigen bouwblokken: apps.nix (programma's) en hostname.nix (willekeurige naam).
-  imports = [ ./apps.nix ./hostname.nix ];
+  imports = [ ./apps.nix ./hostname.nix ./identity.nix ];
+  #imports = [ ./apps.nix ./hostname.nix ];
   #imports = [ ./apps.nix ./hostname.nix ./tpm-enroll.nix ];  TPM-enroll vereist secure boot
   #imports = [ ./apps.nix ]; #TEST MET HOSTNAME.NIX uit
 
