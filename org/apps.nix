@@ -1,15 +1,21 @@
-# Instellingen die voor ALLE laptops van de organisatie gelden, ongeacht hardware.
-# Gebruik hier altijd lib.mkDefault, zodat een host kan afwijken zonder foutmelding.
-{ lib, ... }:
+# Eigen bouwblok voor programma's die niet in DAWO's appsets zitten.
+# Elk programma krijgt een eigen aan/uit-schakelaar onder "werkplek.apps.*",
+# zodat de naam nooit botst met DAWO's eigen "dawo.*" opties.
+{ config, lib, pkgs, inputs, ... }:
+let
+  cfg = config.werkplek.apps.euroOffice;
+
+  # EuroOffice zit nog niet in nixpkgs 26.05, dus pakken we het uit de
+  # unstable-input die DAWO al meebrengt. Zodra het in 26.11 zit kan dit weg.
+  unstable = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+in
 {
-  # Laadt onze eigen bouwblokken (apps.nix definieert de schakelaars).
-  imports = [ ./apps.nix ];
+  # De schakelaar zelf. Standaard uit; org/default.nix zet hem aan.
+  options.werkplek.apps.euroOffice.enable =
+    lib.mkEnableOption "EuroOffice desktop editors (uit nixpkgs-unstable)";
 
-  # TPM2-unlock: de laptop ontgrendelt de schijf zelf via de TPM.
-  # Het LUKS-wachtwoord blijft werken als terugval.
-  dawo.diskUnlock.tpm2.enable = lib.mkDefault true;
-
-  # EuroOffice standaard op elke laptop.
-  # Een laptop die het niet wil: werkplek.apps.euroOffice.enable = false; in zijn hostbestand.
-  werkplek.apps.euroOffice.enable = lib.mkDefault true;
+  # Alleen als de schakelaar aan staat, wordt het pakket geïnstalleerd.
+  config = lib.mkIf cfg.enable {
+    environment.systemPackages = [ unstable.euro-office-desktopeditors ];
+  };
 }
