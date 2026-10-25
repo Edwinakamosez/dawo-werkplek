@@ -3,7 +3,7 @@
 { lib, ... }:
 {
   # Onze eigen bouwblokken: apps.nix (programma's) en hostname.nix (willekeurige naam).
-  imports = [ ./apps.nix ./hostname.nix ];
+  imports = [ ./apps.nix ./hostname.nix ./tpm-enroll.nix ];
   #imports = [ ./apps.nix ]; #TEST MET HOSTNAME.NIX uit
 
   # --- Bureaublad ---
