@@ -35,14 +35,14 @@
   # De sleutel zelf schrijf je per laptop in met systemd-cryptenroll.
   # dawo.diskUnlock.tpm2.enable = lib.mkDefault true;
 
-  dawo.autoUpdate.enable = lib.mkDefault true;
-  dawo.autoUpdate.options.repoUrl = "https://github.com/Edwinakamosez/dawo-werkplek.git";
-
   # --- Updates ---
   # Zelfupdate via comin: uit tot er een eigen repo-koppeling is.
   # Prioriteit 900: sterker dan DAWO's eigen mkDefault (1000), die ook "aan" zegt,
   # maar zwakker dan een gewone waarde, zodat een host het kan overschrijven.
-  dawo.autoUpdate.enable = lib.mkOverride 900 false;
+  # dawo.autoUpdate.enable = lib.mkOverride 900 false;
+
+  dawo.autoUpdate.enable = lib.mkDefault true;
+  dawo.autoUpdate.options.repoUrl = "https://github.com/Edwinakamosez/dawo-werkplek.git";
 
   # --- Standaard Programma's ---
   # EuroOffice op elke laptop. Een laptop die het niet wil:
