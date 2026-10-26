@@ -30,7 +30,7 @@
   # maar zwakker dan een gewone waarde, zodat een host het kan overschrijven.
   dawo.autoUpdate.enable = lib.mkOverride 900 false;
 
-  # --- Programma's ---
+  # --- Standaard Programma's ---
   # EuroOffice op elke laptop. Een laptop die het niet wil:
   # werkplek.apps.euroOffice.enable = false; in zijn hostbestand.
   werkplek.apps.euroOffice.enable = lib.mkDefault true;
