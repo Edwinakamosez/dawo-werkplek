@@ -5,8 +5,8 @@
 
   services.himmelblau.enable = lib.mkDefault true;
   services.himmelblau.settings = {
-    domain = [ "debruinonline.net" ];               # je Entra-domein
-    app_id = "13f1fd0c-ae85-4a6a-935e-dbb8c5edae2e";
+    domain = [ "ruudb.it" ];               # je Entra-domein
+    app_id = "29ad6551-162d-4eec-a100-421e0d6ffed6";
     #pam_allow_groups = [ "<object-id-van-entra-groep>" ]; # wie mag inloggen
   };
 }
