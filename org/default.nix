@@ -26,7 +26,10 @@
   # TPM2-unlock: de laptop ontgrendelt de schijf zelf via de TPM.
   # Het LUKS-wachtwoord blijft werken als terugval.
   # De sleutel zelf schrijf je per laptop in met systemd-cryptenroll.
-  dawo.diskUnlock.tpm2.enable = lib.mkDefault true;
+  # dawo.diskUnlock.tpm2.enable = lib.mkDefault true;
+
+  dawo.autoUpdate.enable = lib.mkDefault true;
+  dawo.autoUpdate.options.repoUrl = "https://github.com/Edwinakamosez/dawo-werkplek.git";
 
   # --- Updates ---
   # Zelfupdate via comin: uit tot er een eigen repo-koppeling is.
