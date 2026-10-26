@@ -13,7 +13,7 @@
   #dawo.desktop.gnome.enable = lib.mkDefault true;
 
   dawo.desktop.plasma.enable = lib.mkDefault true;
-  services.displayManager.defaultSession = "plasma";
+  #services.displayManager.defaultSession = "plasma";
   services.displayManager.sddm.enable = lib.mkForce false; #SDDM ondersteund geen MFA
   services.displayManager.gdm.enable = lib.mkForce true; #GDM ondersteund MFA
   dawo.pam.lockout.services = [ "login" "su" "sudo" "gdm-password" ]; #mitigerende maatregel tegen gat in security model van DAWO. door mixen van SDM en GDM in config.
