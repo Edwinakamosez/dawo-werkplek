@@ -16,7 +16,6 @@
   services.displayManager.defaultSession = "plasma";
   services.displayManager.sddm.enable = lib.mkForce false; #SDDM ondersteund geen MFA
   services.displayManager.gdm.enable = lib.mkForce true; #GDM ondersteund MFA
-  users.defaultUserShell = pkgs.bash;
   dawo.pam.lockout.services = [ "login" "su" "sudo" "gdm-password" ]; #mitigerende maatregel tegen gat in security model van DAWO. door mixen van SDM en GDM in config.
   
   # Inlogscherm (GDM): geen lijst met gebruikers tonen. Entra-accounts staan er
