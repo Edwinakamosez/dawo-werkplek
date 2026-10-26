@@ -1,3 +1,5 @@
+Boot de installer-stick, open een terminal en voer dit uit:
+
 curl -L https://raw.githubusercontent.com/Edwinakamosez/dawo-werkplek/main/install.sh -o /tmp/install.sh && sudo bash /tmp/install.sh
  
 Je krijgt dan het menu om het type laptop en de partner te kiezen. Wil je het menu overslaan, geef dan de naam mee:
