@@ -1,6 +1,6 @@
 # Instellingen die voor ALLE laptops van de organisatie gelden, ongeacht hardware.
 # Gebruik hier lib.mkDefault zodat een host kan afwijken zonder foutmelding.
-{ lib, ... }:
+{ pkgs, lib, ... }:
 {
   # Onze eigen bouwblokken: apps.nix.
  imports = [
@@ -13,11 +13,12 @@
   #dawo.desktop.gnome.enable = lib.mkDefault true;
 
   dawo.desktop.plasma.enable = lib.mkDefault true;
-  #services.displayManager.defaultSession = "plasma";
+  services.displayManager.defaultSession = "plasma";
   services.displayManager.sddm.enable = lib.mkForce false; #SDDM ondersteund geen MFA
   services.displayManager.gdm.enable = lib.mkForce true; #GDM ondersteund MFA
+  users.defaultUserShell = pkgs.bash;
   dawo.pam.lockout.services = [ "login" "su" "sudo" "gdm-password" ]; #mitigerende maatregel tegen gat in security model van DAWO. door mixen van SDM en GDM in config.
-
+  
   # Inlogscherm (GDM): geen lijst met gebruikers tonen. Entra-accounts staan er
   # toch niet in; wie inlogt typt zelf de gebruikersnaam (UPN). Het lokale
   # noodaccount "dawo" werkt nog steeds door het te typen.
