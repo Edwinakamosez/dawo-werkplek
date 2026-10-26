@@ -6,9 +6,6 @@
  imports = [
     ./apps.nix
     ./Config-system-hostname.nix
-    ./Config-system-identity.nix
-    # ./Config-system-tpm-enroll.nix   # vereist Secure Boot
-    # ./Config-app-nextcloud.nix
   ];
   # --- Bureaublad ---
   # KDE Plasma voor iedereen. DAWO eist precies één van plasma of gnome.
