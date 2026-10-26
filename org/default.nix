@@ -10,7 +10,8 @@
 
   # --- Bureaublad ---
   # KDE Plasma voor iedereen. DAWO eist precies één van plasma of gnome.
-  dawo.desktop.plasma.enable = lib.mkDefault true;
+  #dawo.desktop.plasma.enable = lib.mkDefault true; ondersteund geen entra MFA
+  dawo.desktop.gnome.enable = lib.mkDefault true;
 
   # --- Opstarten en schijf ---
   # Secure Boot (lanzaboote). De sleutels maakt install.sh aan.
