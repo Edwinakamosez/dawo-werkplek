@@ -21,9 +21,13 @@
   services.displayManager.gdm.enable = lib.mkForce true; #GDM ondersteund MFA
   dawo.pam.lockout.services = [ "login" "su" "sudo" "gdm-password" ]; #mitigerende maatregel tegen gat in security model van DAWO. door mixen van SDM en GDM in config.
 
+  # Inlogscherm (GDM): geen lijst met gebruikers tonen. Entra-accounts staan er
+  # toch niet in; wie inlogt typt zelf de gebruikersnaam (UPN). Het lokale
+  # noodaccount "dawo" werkt nog steeds door het te typen.
+
   programs.dconf.profiles.gdm.databases = [
   { settings."org/gnome/login-screen".disable-user-list = true; }
-  ]; # disable userlist op loginscherm
+  ];
 
   # --- Opstarten en schijf ---
   # Secure Boot (lanzaboote). De sleutels maakt install.sh aan.
