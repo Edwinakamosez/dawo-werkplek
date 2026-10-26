@@ -24,7 +24,7 @@ if [ -z "$HOST" ]; then
   if ls /dev/nvme0n1 >/dev/null 2>&1; then SUGGESTIE="laptop-nvme"; elif ls /dev/sda >/dev/null 2>&1; then SUGGESTIE="laptop-sata"; fi
   echo "Kies het type laptop:"
   for i in "${!HOSTS[@]}"; do
-    mark=""; [ "${HOSTS[$i]}" = "$SUGGESTIE" ] && mark="   <- gedetecteerd"
+    mark=""; [[ "${HOSTS[$i]}" == "$SUGGESTIE"* ]] && mark="   <- gedetecteerd"
     echo "  $((i+1))) ${HOSTS[$i]}$mark"
   done
   read -r -p "Nummer: " KEUZE </dev/tty
