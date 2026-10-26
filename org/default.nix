@@ -3,11 +3,13 @@
 { lib, ... }:
 {
   # Onze eigen bouwblokken: apps.nix (programma's) en hostname.nix (willekeurige naam).
-  imports = [ ./apps.nix ./hostname.nix ./identity.nix ];
-  #imports = [ ./apps.nix ./hostname.nix ];
-  #imports = [ ./apps.nix ./hostname.nix ./tpm-enroll.nix ];  TPM-enroll vereist secure boot
-  #imports = [ ./apps.nix ]; #TEST MET HOSTNAME.NIX uit
-
+ imports = [
+    ./apps.nix
+    ./Config-system-hostname.nix
+    ./Config-system-identity.nix
+    # ./Config-system-tpm-enroll.nix   # vereist Secure Boot
+    # ./Config-app-nextcloud.nix
+  ];
   # --- Bureaublad ---
   # KDE Plasma voor iedereen. DAWO eist precies één van plasma of gnome.
   #dawo.desktop.plasma.enable = lib.mkDefault true; ondersteund geen entra MFA
