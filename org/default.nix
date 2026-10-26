@@ -2,7 +2,7 @@
 # Gebruik hier lib.mkDefault zodat een host kan afwijken zonder foutmelding.
 { lib, ... }:
 {
-  # Onze eigen bouwblokken: apps.nix (programma's) en hostname.nix (willekeurige naam).
+  # Onze eigen bouwblokken: apps.nix.
  imports = [
     ./apps.nix
     ./Config-system-hostname.nix
