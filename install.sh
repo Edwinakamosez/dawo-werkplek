@@ -8,6 +8,14 @@ HOST="${1:-}"
 [ "$(id -u)" -eq 0 ] || { echo "Draai dit als root: sudo bash /tmp/install.sh"; exit 1; }
 cd /tmp
 
+# De live-USB draait uit het RAM; met te weinig geheugen loopt de installatie vast.
+MEM_GB=$(( $(awk '/MemTotal/{print $2}' /proc/meminfo) / 1024 / 1024 ))
+if [ "$MEM_GB" -lt 6 ]; then
+  echo "WAARSCHUWING: deze machine heeft ${MEM_GB} GB geheugen; minimaal 8 GB wordt aangeraden."
+  read -r -p "Toch doorgaan? (j/n) " DOOR </dev/tty
+  [ "$DOOR" = "j" ] || { echo "Afgebroken."; exit 1; }
+fi
+
 echo "=== Stap 1: repo ophalen en vastpinnen ==="
 rm -rf /tmp/werkplek
 nix shell nixpkgs#git --command git clone --depth 1 "$REPO" /tmp/werkplek
@@ -81,9 +89,14 @@ nix shell nixpkgs#git --command \
   nix run github:nix-community/disko/latest -- \
     --mode destroy,format,mount --yes-wipe-all-disks --flake "$FLAKE"
 
+# De live-USB draait uit het RAM; zet de swapfile die disko net heeft
+# aangemaakt aan, anders loopt het geheugen vol tijdens het bouwen.
+swapon /mnt/.swapvol/swapfile || echo "WAARSCHUWING: swap aanzetten mislukt."
+
 echo "=== Stap 5: installeren ==="
+# Niet te veel tegelijk bouwen: Himmelblau compileert Rust en dat vraagt veel geheugen.
 nix shell nixpkgs#git --command \
-  nixos-install --flake "$FLAKE" --no-root-passwd
+  nixos-install --flake "$FLAKE" --no-root-passwd --max-jobs 2
 
 echo "=== Stap 6: TPM2 automatisch inschrijven ==="
 if [ -e /dev/tpmrm0 ]; then
@@ -100,5 +113,7 @@ else
 fi
 
 rm -f /tmp/secret.key
-echo "=== Klaar, herstart ==="
+echo "=== Klaar ==="
+# Anders start de laptop weer van de stick en begint de installatie opnieuw.
+read -r -p "Haal de USB-stick eruit en druk op Enter om te herstarten. " _ </dev/tty
 reboot
