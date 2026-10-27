@@ -29,6 +29,9 @@ in
   networking.wireless.enable = lib.mkForce false;
   networking.networkmanager.enable = true;
 
+  # Gecomprimeerde swap in het RAM: geeft lucht voordat de echte swapfile er is.
+  zramSwap.enable = true;
+
   environment.systemPackages = [ dawo-install ];
 
   # De installer logt op tty1 automatisch in als "nixos"; daar starten we het
