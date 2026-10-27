@@ -43,5 +43,10 @@
         laptop-sata-ruud  = mkHost { host = "laptop-sata"; partner = "Ruud"; };
         laptop-nvme-ruud  = mkHost { host = "laptop-nvme"; partner = "Ruud"; };
       };
+
+      # USB-installer (zie installer/iso.nix). Bewust niet onder
+      # nixosConfigurations, anders verschijnt hij in het menu van install.sh.
+      packages.x86_64-linux.installer-iso =
+        (lib.nixosSystem { modules = [ ./installer/iso.nix ]; }).config.system.build.isoImage;
     };
 }
