@@ -6,5 +6,5 @@
   ];
 
 ===== standaard achtergrond
-  werkplek.wallpaper = ./DAWO_achtergrond_SSC-Ons_v2-black.png;
+  #werkplek.wallpaper = ./DAWO_achtergrond_SSC-Ons_v2-black.png;
 }
