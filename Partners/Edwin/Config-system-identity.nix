@@ -4,6 +4,7 @@
   imports = [ himmelblau.nixosModules.himmelblau ];
 
   services.himmelblau.enable = lib.mkDefault true;
+
   # Standaardlijst van Himmelblau + "kde": het KDE-vergrendelscherm gebruikt
   # PAM-service "kde", zonder deze werkt ontgrendelen met Entra niet.
 
