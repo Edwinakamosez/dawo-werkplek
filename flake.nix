@@ -47,6 +47,6 @@
       # USB-installer (zie installer/iso.nix). Bewust niet onder
       # nixosConfigurations, anders verschijnt hij in het menu van install.sh.
       packages.x86_64-linux.installer-iso =
-        (lib.nixosSystem { modules = [ ./installer/iso.nix ]; }).config.system.build.isoImage;
+        (lib.nixosSystem { modules = [ ./Installer/iso.nix ]; }).config.system.build.isoImage;
     };
 }
