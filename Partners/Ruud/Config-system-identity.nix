@@ -3,12 +3,13 @@
 {
   imports = [ himmelblau.nixosModules.himmelblau ];
 
-    # Standaardlijst van Himmelblau + "kde": het KDE-vergrendelscherm gebruikt
+  services.himmelblau.enable = lib.mkDefault true;
+
+  # Standaardlijst van Himmelblau + "kde": het KDE-vergrendelscherm gebruikt
   # PAM-service "kde", zonder deze werkt ontgrendelen met Entra niet.
 
   services.himmelblau.pamServices = [ "passwd" "login" "su" "systemd-user" "kde" ];
 
-  services.himmelblau.enable = lib.mkDefault true;
   services.himmelblau.settings = {
     domain = [ "ruudb.it" ];               # je Entra-domein
     app_id = "29ad6551-162d-4eec-a100-421e0d6ffed6";
