@@ -6,6 +6,7 @@
  imports = [
     ./apps.nix
     ./Config-system-hostname.nix
+    ./Config-desktop-wallpaper.nix
   ];
   # --- Bureaublad ---
   # KDE Plasma voor iedereen. DAWO eist precies één van plasma of gnome.
