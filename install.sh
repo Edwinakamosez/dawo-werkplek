@@ -19,6 +19,55 @@ fi
 echo "=== Stap 1: repo ophalen en vastpinnen ==="
 rm -rf /tmp/werkplek
 nix shell nixpkgs#git --command git clone --depth 1 "$REPO" /tmp/werkplek
+
+# --- Apparaatregister (devices.json): herken deze laptop aan het serienummer ---
+# De sleutel is een sha256 van "serial:<serienummer>" (kleine letters, zonder spaties),
+# of "uuid:<uuid>" als het serienummer ontbreekt of een placeholder is.
+# Dezelfde berekening staat in org/Config-system-hostname.nix (werkplek-device-id).
+DMI_DIR="${DMI_DIR:-/sys/class/dmi/id}"
+read_dmi() { { cat "$DMI_DIR/$1" 2>/dev/null || true; } | tr -d '\n' | sed 's/^ *//; s/ *$//'; }
+SERIAL="$(read_dmi product_serial | tr 'A-Z' 'a-z' | tr -d ' ')"
+UUID_HW="$(read_dmi product_uuid | tr 'A-Z' 'a-z')"
+case "$SERIAL" in
+  ""|"defaultstring"|"tobefilledbyo.e.m."|"none"|"n/a"|"0"|"systemserialnumber"|"notspecified"|"unknown")
+    DEVICE_KEY="uuid:$UUID_HW" ;;
+  *) DEVICE_KEY="serial:$SERIAL" ;;
+esac
+DEVICE_ID="$(printf '%s' "$DEVICE_KEY" | sha256sum | cut -d' ' -f1)"
+echo "Apparaat: $DEVICE_KEY"
+echo "Apparaat-ID: $DEVICE_ID"
+
+DEV_HOST=""; DEV_PARTNER=""; DEV_BRANCH=""; DEV_NAME=""
+if [ -f /tmp/werkplek/devices.json ]; then
+  IFS='|' read -r DEV_HOST DEV_PARTNER DEV_BRANCH DEV_NAME < <(
+    nix shell nixpkgs#jq --command jq -r --arg id "$DEVICE_ID" \
+      '.devices[$id] // empty | [(.host // ""), (.partner // ""), (.branch // "main"), (.name // "")] | join("|")' \
+      /tmp/werkplek/devices.json 2>/dev/null || true
+  ) || true
+fi
+
+if [ -n "$DEV_HOST" ] && [ -n "$DEV_PARTNER" ]; then
+  # Alleen veilige waarden toestaan (komen uit een bestand in de repo).
+  [[ "$DEV_HOST" =~ ^[a-z0-9-]+$ ]] || { echo "FOUT: ongeldige host in devices.json."; exit 1; }
+  [[ "$DEV_PARTNER" =~ ^[A-Za-z0-9_-]+$ ]] || { echo "FOUT: ongeldige partner in devices.json."; exit 1; }
+  [[ "$DEV_BRANCH" =~ ^[A-Za-z0-9][A-Za-z0-9._/-]*$ ]] || DEV_BRANCH=main
+  if [ -z "$HOST" ]; then
+    HOST="$DEV_HOST-$(printf '%s' "$DEV_PARTNER" | tr 'A-Z' 'a-z')"
+    echo "=== Apparaat herkend in devices.json ==="
+    echo "Naam: ${DEV_NAME:-(willekeurig)}   Configuratie: $HOST   Branch: $DEV_BRANCH"
+    if [ "$DEV_BRANCH" != "main" ]; then
+      echo "Andere branch gevraagd: repo opnieuw ophalen van $DEV_BRANCH."
+      rm -rf /tmp/werkplek
+      nix shell nixpkgs#git --command git clone --depth 1 --branch "$DEV_BRANCH" "$REPO" /tmp/werkplek
+    fi
+  else
+    echo "Hostnaam is op de opdrachtregel meegegeven; devices.json wordt genegeerd."
+  fi
+else
+  echo "Dit apparaat staat niet in devices.json. Je kiest het type zelf."
+  echo "Wil je het vooraf registreren? Zet dit Apparaat-ID in devices.json."
+fi
+
 nix shell nixpkgs#git --command nix flake lock /tmp/werkplek
 
 # Geen hostnaam meegegeven? Toon een menu met alle hosts uit de flake.

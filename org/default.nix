@@ -6,6 +6,7 @@
  imports = [
     ./apps.nix
     ./Config-system-hostname.nix
+    ./Config-tool-nixmgt.nix
     ./Config-desktop-wallpaper.nix
   ];
   # --- Bureaublad ---
