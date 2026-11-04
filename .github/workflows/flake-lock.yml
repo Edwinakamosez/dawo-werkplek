@@ -1,0 +1,22 @@
+# Creates or updates flake.lock on GitHub (no laptop needed).
+# Run it by hand: Actions tab -> "Update flake.lock" -> Run workflow.
+name: Update flake.lock
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - name: Create or update flake.lock
+        run: nix flake lock
+      - name: Commit flake.lock
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add flake.lock
+          git diff --cached --quiet || git commit -m "Update flake.lock"
+          git push
