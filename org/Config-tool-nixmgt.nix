@@ -111,7 +111,7 @@ let
           systemctl stop "$updater_unit" || true
         fi
         echo "=== $cfg on branch $b ($mode) ==="
-        nixos-rebuild "$mode" --refresh --flake "$repo?ref=$b#$cfg" || return 1
+        nixos-rebuild "$mode" --refresh --no-write-lock-file --flake "$repo?ref=$b#$cfg" || return 1
         if [ "$b" = main ] && [ "$mode" = switch ]; then
           systemctl start "$updater_unit" || true
         fi
