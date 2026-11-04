@@ -19,8 +19,8 @@ let
     text = ''
       dmi=/sys/class/dmi/id
       read_dmi() { { cat "$dmi/$1" 2>/dev/null || true; } | tr -d '\n' | sed 's/^ *//; s/ *$//'; }
-      serial=$(read_dmi product_serial | tr 'A-Z' 'a-z' | tr -d ' ')
-      uuid=$(read_dmi product_uuid | tr 'A-Z' 'a-z')
+      serial=$(read_dmi product_serial | tr '[:upper:]' '[:lower:]' | tr -d ' ')
+      uuid=$(read_dmi product_uuid | tr '[:upper:]' '[:lower:]')
       case "$serial" in
         ""|"defaultstring"|"tobefilledbyo.e.m."|"none"|"n/a"|"0"|"systemserialnumber"|"notspecified"|"unknown")
           key="uuid:$uuid" ;;
@@ -91,5 +91,5 @@ in
   services.comin.hostname = lib.mkDefault hostConfig.name;
 
   # Liever een stabiele naam op basis van het serienummer zonder register? Vervang dan de name=-regel door:
-  #   name="${prefix}-$(tr -d ' ' < /sys/class/dmi/id/product_serial | tail -c 7 | tr 'A-Z' 'a-z')"
+  #   name="${prefix}-$(tr -d ' ' < /sys/class/dmi/id/product_serial | tail -c 7 | tr '[:upper:]' '[:lower:]')"
 }

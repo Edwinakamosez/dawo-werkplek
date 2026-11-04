@@ -26,8 +26,8 @@ nix shell nixpkgs#git --command git clone --depth 1 "$REPO" /tmp/werkplek
 # Dezelfde berekening staat in org/Config-system-hostname.nix (werkplek-device-id).
 DMI_DIR="${DMI_DIR:-/sys/class/dmi/id}"
 read_dmi() { { cat "$DMI_DIR/$1" 2>/dev/null || true; } | tr -d '\n' | sed 's/^ *//; s/ *$//'; }
-SERIAL="$(read_dmi product_serial | tr 'A-Z' 'a-z' | tr -d ' ')"
-UUID_HW="$(read_dmi product_uuid | tr 'A-Z' 'a-z')"
+SERIAL="$(read_dmi product_serial | tr '[:upper:]' '[:lower:]' | tr -d ' ')"
+UUID_HW="$(read_dmi product_uuid | tr '[:upper:]' '[:lower:]')"
 case "$SERIAL" in
   ""|"defaultstring"|"tobefilledbyo.e.m."|"none"|"n/a"|"0"|"systemserialnumber"|"notspecified"|"unknown")
     DEVICE_KEY="uuid:$UUID_HW" ;;
@@ -52,7 +52,7 @@ if [ -n "$DEV_HOST" ] && [ -n "$DEV_PARTNER" ]; then
   [[ "$DEV_PARTNER" =~ ^[A-Za-z0-9_-]+$ ]] || { echo "FOUT: ongeldige partner in devices.json."; exit 1; }
   [[ "$DEV_BRANCH" =~ ^[A-Za-z0-9][A-Za-z0-9._/-]*$ ]] || DEV_BRANCH=main
   if [ -z "$HOST" ]; then
-    HOST="$DEV_HOST-$(printf '%s' "$DEV_PARTNER" | tr 'A-Z' 'a-z')"
+    HOST="$DEV_HOST-$(printf '%s' "$DEV_PARTNER" | tr '[:upper:]' '[:lower:]')"
     echo "=== Apparaat herkend in devices.json ==="
     echo "Naam: ${DEV_NAME:-(willekeurig)}   Configuratie: $HOST   Branch: $DEV_BRANCH"
     if [ "$DEV_BRANCH" != "main" ]; then
